@@ -11,8 +11,11 @@ namespace MBS.SequentialTask
         public BaseHandlerModel()
         {
             CreateDate = DateTime.Now;
+            
         }
 
         public DateTime CreateDate { get;  }
+        public bool ContinueWithError { get; set; } = false;
+
     }
 }

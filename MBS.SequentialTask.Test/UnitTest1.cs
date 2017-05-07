@@ -17,9 +17,11 @@ namespace MBS.SequentialTask.Test
             {
                 Dates = new List<DateTime>() { DateTime.Now },
                 Sum = 1,
+                ContinueWithError = true // set to True to see the effect
             };
 
             ConcurrencyHandler<MyModelHandler> q = new ConcurrencyHandler<MyModelHandler>(mdl);
+            
             q.RegisterTaskToQueue((m) =>
             {
                 m.Sum += 50;
@@ -35,7 +37,7 @@ namespace MBS.SequentialTask.Test
             // 51
             q.RegisterTaskToQueue((d) =>
             {
-                d.Sum *= 2;
+                d.Sum /= 0;
                 d.Dates.Add(DateTime.Now);
                 //Thread.Sleep(4000);
                 var id = Thread.CurrentContext.ContextID;

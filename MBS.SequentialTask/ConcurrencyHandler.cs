@@ -81,6 +81,11 @@ namespace MBS.SequentialTask
             int counter = 0;
             Task<T> t = Task.Run<T>(() =>
             {
+                if (!_initializer.ContinueWithError && HassError)
+                {
+                    return _initializer;
+                }
+
                 try
                 {
                     var r = queue[0](_initializer);
@@ -101,15 +106,22 @@ namespace MBS.SequentialTask
 
                 var current = tmp.ContinueWith((lastStep) =>
                 {
+                    var r = lastStep.Result;
+
+                    if (!r.ContinueWithError && HassError)
+                    {
+                        return r;
+                    }
+
                     try
                     {
-                        var x = queue[i](lastStep.Result);
+                        var x = queue[i](r);
                         return x;
                     }
                     catch (Exception ex)
                     {
                         errors.Add(new ErrorModel { Error = ex, OperationIndex = i, TaskId = Task.CurrentId });
-                        return lastStep.Result;
+                        return r;
                     }
                 });
                 counter++;
